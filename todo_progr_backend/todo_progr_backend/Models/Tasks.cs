@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -7,10 +8,22 @@ namespace todo_progr_backend.Models
 {
     public class Tasks
     {
+        public Tasks()
+        {
+            Subtasks = new List<Subtask>();
+        }
+        [Key]
         public Guid TaskId { get; set; }
-        public User User { get; set; }
+        [Required]
         public DateTime CreatedDate { get; set; }
+        [Required]
+        [MaxLength(150,ErrorMessage = "Too long content!")]
         public string Content { get; set; }
+
+        public User User { get; set; }
+
         public Notifications Notification { get; set; }
+
+        public List<Subtask> Subtasks { get; set; }
     }
 }

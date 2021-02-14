@@ -36,12 +36,16 @@ namespace todo_progr_backend.UserData
 
         public void DeleteUser(User user)
         {
-            throw new NotImplementedException();
+            users.Remove(user);
         }
 
         public User EditUser(User user)
         {
-            throw new NotImplementedException();
+            var existingUser = GetUser(user.UserId);
+
+            existingUser.UserName = user.UserName;
+
+            return existingUser;
         }
 
         public User GetUser(Guid id)
