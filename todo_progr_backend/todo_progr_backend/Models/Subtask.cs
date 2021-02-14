@@ -8,7 +8,7 @@ namespace todo_progr_backend.Models
     public class Subtask
     {
         public Guid SubtaskId { get; set; }
-        public Task task { get; set; }
+        public Task MainTask { get; set; }
         public DateTime CreatedDate { get; set; }
         public string Content { get; set; }
     }

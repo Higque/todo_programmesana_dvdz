@@ -8,9 +8,9 @@ namespace todo_progr_backend.Models
     public class Tasks
     {
         public Guid TaskId { get; set; }
-        public User user { get; set; }
+        public User User { get; set; }
         public DateTime CreatedDate { get; set; }
         public string Content { get; set; }
-        public bool Notification { get; set; }
+        public Notifications Notification { get; set; }
     }
 }

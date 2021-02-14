@@ -14,5 +14,8 @@ namespace todo_progr_backend.Models
         public string Password { get; set; }
 
         public string Email { get; set; }
+
+        List<Tasks> tasks { get; set; }
+
     }
 }
