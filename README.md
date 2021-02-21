@@ -1,6 +1,6 @@
 # todo_programmesana_dvdz
 Higque - Rafaels Matjuhovs;
-Zuba5tik - Viktors Fedorovičs
+Zuba5tik - Viktors Fedorovičs;
 RobertsKmetjuks - Roberts Kmetjuks
 
 
