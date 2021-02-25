@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -10,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using todo_progr_backend.Models;
+using todo_progr_backend.TaskData;
 using todo_progr_backend.UserData;
 
 namespace todo_progr_backend
@@ -28,7 +30,12 @@ namespace todo_progr_backend
         {
             services.AddControllers();
 
-            services.AddSingleton<IUserData, UserMockData>();
+            services.AddDbContextPool<UserContext>(options => options.UseSqlServer(
+                Configuration.GetConnectionString("UserContext")));
+
+            services.AddScoped<IUserData, SqlUserData>();
+            services.AddScoped<ITaskData, SqlTaskData>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

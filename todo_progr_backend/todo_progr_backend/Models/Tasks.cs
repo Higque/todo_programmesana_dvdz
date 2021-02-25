@@ -8,10 +8,7 @@ namespace todo_progr_backend.Models
 {
     public class Tasks
     {
-        public Tasks()
-        {
-            Subtasks = new List<Subtask>();
-        }
+
         [Key]
         public Guid TaskId { get; set; }
         [Required]
@@ -20,10 +17,9 @@ namespace todo_progr_backend.Models
         [MaxLength(150,ErrorMessage = "Too long content!")]
         public string Content { get; set; }
 
+        [Required]
+        public Guid UserId { get; set; }
         public User User { get; set; }
 
-        public Notifications Notification { get; set; }
-
-        public List<Subtask> Subtasks { get; set; }
     }
 }

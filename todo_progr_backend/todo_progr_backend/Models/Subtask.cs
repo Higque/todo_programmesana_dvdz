@@ -16,6 +16,8 @@ namespace todo_progr_backend.Models
         [MaxLength(150, ErrorMessage = "Too long Subtask!")]
         public string Content { get; set; }
 
+        [Required]
+        public Guid TaskId { get; set; }
         public Task MainTask { get; set; }
     }
 }

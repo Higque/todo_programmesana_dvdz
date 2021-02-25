@@ -8,6 +8,7 @@ namespace todo_progr_backend.Models
 {
     public class Notifications
     {
+
         [Key]
         public Guid NotificationId { get; set; }
         [Required]
@@ -15,6 +16,8 @@ namespace todo_progr_backend.Models
         [Required]
         public string RemindMessage { get; set; }
 
-        public Task Task { get; set; }
+        [Required]
+        public Guid TaskId { get; set; }
+        public Task NotificationTask { get; set; }
     }
 }
