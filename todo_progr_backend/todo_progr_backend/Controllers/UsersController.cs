@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using todo_progr_backend.Models;
 using todo_progr_backend.UserData;
@@ -10,10 +11,12 @@ namespace todo_progr_backend.Controllers
     public class UsersController : ControllerBase
     {
         private IUserData _userData;
+        private UserContext _context;
 
-        public UsersController(IUserData userData)
+        public UsersController(IUserData userData, UserContext context)
         {
             _userData = userData;
+            _context = context;
         }
         
 
@@ -24,6 +27,12 @@ namespace todo_progr_backend.Controllers
             return Ok(_userData.GetUsers());
         }
 
+        [Route("/api/[controller]/global")]
+        [HttpGet]
+        public IActionResult GetUsersAndTasks()
+        {
+            return Ok(_userData.GetUsersAndTasks());
+        }
 
         [HttpGet]
         [Route("api/[controller]/{id}")]
@@ -38,6 +47,15 @@ namespace todo_progr_backend.Controllers
             return NotFound("User with ID: " + id + " not found!");
         }
 
+
+        [Route("/api/[controller]/amount")]
+        [HttpGet]
+        public int GetUserAmount()
+        {
+
+            return _userData.GetUserAmount();
+
+        }
 
         [HttpPost]
         [Route("api/[controller]")]
@@ -65,9 +83,9 @@ namespace todo_progr_backend.Controllers
         }
 
 
-        [HttpPatch]
+        [HttpPut]
         [Route("api/[controller]/{id}")]
-        public IActionResult EditUser(Guid id, User user)
+        public IActionResult EditUser(Guid id,[FromBody] User user)
         {
             var existingUser = _userData.GetUser(id);
             if (existingUser != null)

@@ -53,9 +53,19 @@ namespace todo_progr_backend.UserData
             return users.SingleOrDefault(x => x.UserId == id);  
         }
 
+        public int GetUserAmount()
+        {
+            throw new NotImplementedException();
+        }
+
         public List<User> GetUsers()
         {
             return users;
+        }
+
+        public List<User> GetUsersAndTasks()
+        {
+            throw new NotImplementedException();
         }
     }
 }

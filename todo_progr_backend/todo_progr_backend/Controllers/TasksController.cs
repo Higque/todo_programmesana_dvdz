@@ -11,11 +11,12 @@ namespace todo_progr_backend.Controllers
     public class TasksController : ControllerBase
     {
         private ITaskData _taskData;
+        private UserContext _context;
 
-
-        public TasksController(ITaskData taskData)
+        public TasksController(ITaskData taskData, UserContext context)
         {
             _taskData = taskData;
+            _context = context;
         }
 
         [HttpGet]
@@ -42,7 +43,7 @@ namespace todo_progr_backend.Controllers
 
         [HttpPost]
         [Route("api/[controller]")]
-        public IActionResult AddTask(Tasks task)
+        public IActionResult AddTask([FromBody] Tasks task)
         {
             _taskData.AddTask(task);
 
@@ -50,15 +51,14 @@ namespace todo_progr_backend.Controllers
                 , task);
         }
 
-
         [HttpDelete]
         [Route("api/[controller]/{id}")]
         public IActionResult DeleteTask(Guid id)
         {
-            var user = _taskData.GetTask(id);
-            if (user != null)
+            var task = _taskData.GetTask(id);
+            if (task != null)
             {
-                _taskData.DeleteTask(user);
+                _taskData.DeleteTask(task);
                 return Ok();
             }
 
@@ -66,19 +66,40 @@ namespace todo_progr_backend.Controllers
         }
 
 
-        [HttpPatch]
+        [HttpPut]
         [Route("api/[controller]/{id}")]
-        public IActionResult EditUser(Guid id, Tasks task)
+        public IActionResult EditTask(Guid id, [FromBody] Tasks task)
         {
-            var existingUser = _taskData.GetTask(id);
-            if (existingUser != null)
+            var existingTask = _taskData.GetTask(id);
+            if (existingTask != null)
             {
-                task.UserId = existingUser.UserId;
+                task.TaskId = existingTask.TaskId;
                 _taskData.EditTask(task);
                 return Ok();
             }
 
-            return NotFound("User with ID: " + id + " not found!");
+            return NotFound("Task with ID: " + id + " not found!");
         }
+
+
+        //[HttpPut]
+        //[Route("api/[controller]/{id}")]
+        //public IActionResult EditTask(Guid id,[FromBody] Tasks task)
+        //{
+        //    var existingTask = _context.Tasks.Find(id);
+        //    if (existingTask != null)
+        //    {
+        //        existingTask.Content = task.Content;
+        //        existingTask.CreatedDate = task.CreatedDate;
+        //        existingTask.UserId = task.UserId;
+
+        //        _context.Tasks.Update(existingTask);
+        //        _context.SaveChanges();
+
+        //        return Ok();
+        //    }
+
+        //    return NotFound("Task with ID: " + id + " not found!");
+        //}
     }
 }

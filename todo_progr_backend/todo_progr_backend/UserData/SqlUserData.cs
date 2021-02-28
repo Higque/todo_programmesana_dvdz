@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -50,9 +51,19 @@ namespace todo_progr_backend.UserData
             return user;
         }
 
+        public int GetUserAmount()
+        {
+            return _userContext.Users.Count();
+        }
+
         public List<User> GetUsers()
         {
            return _userContext.Users.ToList();
+        }
+
+        public List<User> GetUsersAndTasks()
+        {
+            return _userContext.Users.Include(x => x.Tasks).ToList();
         }
     }
 }

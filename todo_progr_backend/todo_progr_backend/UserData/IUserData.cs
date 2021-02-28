@@ -10,6 +10,10 @@ namespace todo_progr_backend.UserData
     {
         List<User> GetUsers();
 
+        List<User> GetUsersAndTasks();
+
+        int GetUserAmount();
+
         User GetUser(Guid id);
 
         User AddUser(User user);
