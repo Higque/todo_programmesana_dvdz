@@ -7,4 +7,5 @@ data class Task (
     var CreatedDate:Date,
     var Content:String,
     var UserId:String
+//    var User:Int? = null
 )
