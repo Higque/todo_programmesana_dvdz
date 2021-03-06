@@ -21,5 +21,6 @@ namespace todo_progr_backend.UserData
         void DeleteUser(User user);
 
         User EditUser(User user);
+
     }
 }

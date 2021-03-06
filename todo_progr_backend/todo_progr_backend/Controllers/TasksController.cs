@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,7 @@ using todo_progr_backend.TaskData;
 
 namespace todo_progr_backend.Controllers
 {
+    [Authorize]
     public class TasksController : ControllerBase
     {
         private ITaskData _taskData;

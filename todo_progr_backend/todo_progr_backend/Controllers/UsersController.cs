@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -7,6 +8,7 @@ using todo_progr_backend.UserData;
 
 namespace todo_progr_backend.Controllers
 {
+    [Authorize]
     [ApiController]
     public class UsersController : ControllerBase
     {
@@ -18,7 +20,6 @@ namespace todo_progr_backend.Controllers
             _userData = userData;
             _context = context;
         }
-        
 
         [HttpGet]
         [Route("api/[controller]")]
