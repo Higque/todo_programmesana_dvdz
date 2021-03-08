@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace todo_progr_backend.Models
@@ -23,7 +24,7 @@ namespace todo_progr_backend.Models
         [Required]
         [MaxLength(70, ErrorMessage = "Too long Email!")]
         public string Email { get; set; }
-
+        [JsonIgnore]
         public List<Tasks> Tasks { get; set; }
 
     }

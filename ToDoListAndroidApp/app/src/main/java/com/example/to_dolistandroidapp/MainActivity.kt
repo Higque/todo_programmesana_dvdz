@@ -1,27 +1,31 @@
 package com.example.to_dolistandroidapp
 
-import Models.Task
 import Models.TaskModelItem
+import Models.TaskPostModel
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.SparseBooleanArray
 import android.widget.ArrayAdapter
-import com.google.gson.Gson
+import android.widget.Toast
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.activity_main.*
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.parse
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 //import okhttp3.*
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.io.IOException
-import java.util.*
-import kotlin.collections.ArrayList as ArrayList1
+import java.time.LocalDateTime
 
 class MainActivity : AppCompatActivity() {
 
-//    private val client = OkHttpClient()
-    var itemlist = arrayListOf<String>()
-//    var taskList = arrayListOf<Task>()
     var gson = GsonBuilder().create()
+    private var retrofitInterface: RetrofitInterface?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,45 +36,40 @@ class MainActivity : AppCompatActivity() {
             .addConverterFactory(GsonConverterFactory.create()).build()
 
         var API = rf.create(RetrofitInterface::class.java)
-        var call = API.tasks
+        showTasks(API)
 
-        call?.enqueue(object:retrofit2.Callback<List<TaskModelItem?>?>{
-            override fun onFailure(call: retrofit2.Call<List<TaskModelItem?>?>, t: Throwable) {
-                TODO("Not yet implemented")
-            }
+        add.setOnClickListener {
+            API.createTask(TaskPostModel(
+                    editText.text.toString(),
+                    LocalDateTime.now().toString(),
+                    "614c93e3-a880-43cb-a2ac-d89105507922")
+            ).enqueue(object : Callback<TaskPostModel>{
+                override fun onFailure(call: Call<TaskPostModel>, t: Throwable) {
+                    Toast.makeText(
+                            this@MainActivity,
+                            t.message,
+                            Toast.LENGTH_SHORT
+                    ).show()
+                }
 
-            override fun onResponse(
-                call: retrofit2.Call<List<TaskModelItem?>?>,
-                response: retrofit2.Response<List<TaskModelItem?>?>
-            ) {
-                var taskList : List<TaskModelItem>? = response.body() as List<TaskModelItem>
-                var task = arrayOfNulls<String>(taskList!!.size)
+                override fun onResponse(call: Call<TaskPostModel>, response: Response<TaskPostModel>) {
+                    val responseText = "Response code: ${response.code()}\n content: ${response.body()?.content}"
+                    println(responseText)
+                    if (response.code() == 201) {
+                        Toast.makeText(this@MainActivity, "New ToDo added to list", Toast.LENGTH_SHORT)
+                                .show()
+                    }
+                    else{
+                        Toast.makeText(this@MainActivity, "Failed!", Toast.LENGTH_SHORT)
+                                .show()
+                    }
+                    showTasks(API)
+                }
 
-                for (i in taskList!!.indices)
-                    task[i] = taskList!![i]!!.content
+            })
 
-                var adapter = ArrayAdapter<String>(applicationContext, android.R.layout.simple_list_item_multiple_choice
-                    , task)
-                listView.adapter = adapter
-            }
-
-        })
-
-//        run("http://10.0.2.2:5000/api/tasks")
-////        run("https://api.github.com/users/Evin1-/repos")
-//
-////        var itemlist = arrayListOf<String>()1
-//        var adapter =ArrayAdapter<String>(this,
-//                android.R.layout.simple_list_item_multiple_choice
-//                , itemlist)
-//
-//        add.setOnClickListener {
-//
-//            itemlist.add(editText.text.toString())
-//            listView.adapter =  adapter
-//            adapter.notifyDataSetChanged()
-//            editText.text.clear()
-//        }
+            editText.text.clear()
+        }
 //
 //        clear.setOnClickListener {
 //
@@ -98,24 +97,42 @@ class MainActivity : AppCompatActivity() {
 //        }
 //    }
 
-//    private fun run(url: String) {
-//        var responseCheck = ""
-//        val request = Request.Builder()
-//                .url(url)
-//                .build()
-//
-//        client.newCall(request).enqueue(object : Callback {
-//            override fun onFailure(call: Call, e: IOException) {}
-//            override fun onResponse(call: Call, response: Response) {
-//                if (!response.isSuccessful()) {
-//                    throw IOException("Unexpected code $response")
-//                } else {
-//                    responseCheck = response.body()?.string().toString()
-//                }
-//            }
-////            = println(response.body()?.string())
-//        })
-//        println(responseCheck)
-//        taskList = gson.fromJson(responseCheck, Array<Task>::class.java).toCollection(ArrayList())
+    }
+    fun showTasks(API: RetrofitInterface){
+        var call = API.tasks
+        call?.enqueue(object:retrofit2.Callback<List<TaskModelItem?>?>{
+            override fun onFailure(call: retrofit2.Call<List<TaskModelItem?>?>, t: Throwable) {
+                Toast.makeText(
+                        this@MainActivity,
+                        t.message,
+                        Toast.LENGTH_SHORT
+                ).show()
+            }
+
+            override fun onResponse(
+                    call: retrofit2.Call<List<TaskModelItem?>?>,
+                    response: retrofit2.Response<List<TaskModelItem?>?>
+            ) {
+                var taskList : List<TaskModelItem>? = response.body() as List<TaskModelItem>
+                var task = arrayOfNulls<String>(taskList!!.size)
+
+                for (i in taskList!!.indices)
+                    task[i] = taskList!![i]!!.content
+
+                var adapter = ArrayAdapter<String>(applicationContext, android.R.layout.simple_list_item_multiple_choice
+                        , task)
+                listView.adapter = adapter
+
+                if (response.code() == 200) {
+                    Toast.makeText(this@MainActivity, "Success!", Toast.LENGTH_SHORT)
+                            .show()
+                }
+                else{
+                    Toast.makeText(this@MainActivity, "Failed!", Toast.LENGTH_SHORT)
+                            .show()
+                }
+            }
+
+        })
     }
 }
