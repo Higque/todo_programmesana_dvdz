@@ -22,5 +22,7 @@ namespace todo_progr_backend.UserData
 
         User EditUser(User user);
 
+        User Login(string email, string password);
+
     }
 }

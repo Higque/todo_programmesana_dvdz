@@ -24,7 +24,7 @@ namespace todo_progr_backend.Models
         [Required]
         [MaxLength(70, ErrorMessage = "Too long Email!")]
         public string Email { get; set; }
-        [JsonIgnore]
+
         public List<Tasks> Tasks { get; set; }
 
     }
