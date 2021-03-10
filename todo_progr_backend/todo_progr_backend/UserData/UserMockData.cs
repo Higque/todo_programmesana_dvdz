@@ -67,6 +67,11 @@ namespace todo_progr_backend.UserData
         {
             throw new NotImplementedException();
         }
+
+        public User Login(string email, string password)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 

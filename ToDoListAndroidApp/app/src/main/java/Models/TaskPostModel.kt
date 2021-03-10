@@ -1,9 +1,7 @@
 package Models
 
-data class TaskModelItem(
+data class TaskPostModel(
         var content: String,
         val createdDate: String,
-        val taskId: String?,
-        val user: Any,
         val userId: String
 )

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 using todo_progr_backend.Models;
 using todo_progr_backend.UserData;
 
@@ -67,6 +68,21 @@ namespace todo_progr_backend.Controllers
             return Created(HttpContext.Request.Scheme + "://" + HttpContext.Request.Host + HttpContext.Request.Path + "/" + user.UserId
                 , user);
         }
+
+        [HttpPost]
+        [Route("api/[controller]/login")]
+        public IActionResult Login(string email, string password)
+        {
+            var user = _userData.Login(email, password);
+
+            if (user != null)
+            {
+                return Ok(user);
+            }
+
+            return BadRequest("Incorrect user data!");
+        }
+
 
 
         [HttpDelete]
