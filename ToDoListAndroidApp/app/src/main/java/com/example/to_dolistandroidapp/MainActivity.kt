@@ -4,8 +4,10 @@ import Models.TaskModelItem
 import Models.TaskPostModel
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.SparseBooleanArray
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.core.view.iterator
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.GsonBuilder
@@ -24,12 +26,13 @@ import java.time.LocalDateTime
 
 class MainActivity : AppCompatActivity() {
 
-    var gson = GsonBuilder().create()
-    private var retrofitInterface: RetrofitInterface?=null
+    var taskList : List<TaskModelItem> = listOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        disableButtons()
 
         var rf = Retrofit.Builder()
             .baseUrl(RetrofitInterface.BASE_URL)
@@ -39,65 +42,156 @@ class MainActivity : AppCompatActivity() {
         showTasks(API)
 
         add.setOnClickListener {
-            API.createTask(TaskPostModel(
-                    editText.text.toString(),
-                    LocalDateTime.now().toString(),
-                    "614c93e3-a880-43cb-a2ac-d89105507922")
-            ).enqueue(object : Callback<TaskPostModel>{
-                override fun onFailure(call: Call<TaskPostModel>, t: Throwable) {
-                    Toast.makeText(
-                            this@MainActivity,
-                            t.message,
-                            Toast.LENGTH_SHORT
-                    ).show()
-                }
-
-                override fun onResponse(call: Call<TaskPostModel>, response: Response<TaskPostModel>) {
-                    val responseText = "Response code: ${response.code()}\n content: ${response.body()?.content}"
-                    println(responseText)
-                    if (response.code() == 201) {
-                        Toast.makeText(this@MainActivity, "New ToDo added to list", Toast.LENGTH_SHORT)
-                                .show()
+            if (editText.text.toString() != "") {
+                API.createTask(TaskPostModel(
+                        editText.text.toString(),
+                        LocalDateTime.now().toString(),
+                        "614c93e3-a880-43cb-a2ac-d89105507922")
+                ).enqueue(object : Callback<TaskPostModel>{
+                    override fun onFailure(call: Call<TaskPostModel>, t: Throwable) {
+                        Toast.makeText(
+                                this@MainActivity,
+                                t.message,
+                                Toast.LENGTH_SHORT
+                        ).show()
                     }
-                    else{
-                        Toast.makeText(this@MainActivity, "Failed!", Toast.LENGTH_SHORT)
-                                .show()
+
+                    override fun onResponse(call: Call<TaskPostModel>, response: Response<TaskPostModel>) {
+                        val responseText = "Response code: ${response.code()}\n content: ${response.body()?.content}"
+                        println(responseText)
+                        if (response.code() == 201) {
+                            Toast.makeText(this@MainActivity, "New Task added to list", Toast.LENGTH_SHORT)
+                                    .show()
+                        }
+                        else{
+                            Toast.makeText(this@MainActivity, "Failed!", Toast.LENGTH_SHORT)
+                                    .show()
+                        }
+                        showTasks(API)
+                        editText.text.clear()
+                        disableButtons()
                     }
-                    showTasks(API)
-                }
 
-            })
+                })
+            } else {
+                Toast.makeText(this@MainActivity, "Text field is empty", Toast.LENGTH_SHORT)
+                        .show()
+            }
+        }
 
-            editText.text.clear()
+        edit.setOnClickListener {
+            val position = listView.checkedItemPosition
+            var task = taskList?.get(position)
+            if (task != null) {
+                var call = API.putTask(id = task.taskId.toString(),
+                        taskModelItem = TaskPostModel(
+                                content = editText.text.toString(),
+                                createdDate = task.createdDate,
+                                userId = task.userId
+                        ))
+
+                call.enqueue(object:retrofit2.Callback<Void>{
+                    override fun onFailure(call: Call<Void?>, t: Throwable) {
+                        println(t.message)
+                        Toast.makeText(
+                                this@MainActivity,
+                                t.message,
+                                Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    override fun onResponse(call: Call<Void?>, response: Response<Void?>) {
+                        println(response.body())
+                        if (response.code() == 201) {
+                            Toast.makeText(this@MainActivity, "Task is updated", Toast.LENGTH_SHORT)
+                                    .show()
+                        }
+                        else{
+                            Toast.makeText(this@MainActivity, "Failed!", Toast.LENGTH_SHORT)
+                                    .show()
+                        }
+                        showTasks(API)
+                        editText.text.clear()
+                        disableButtons()
+                    }
+
+                })
+            }
+        }
+
+        clear.setOnClickListener {
+            for(i in taskList.iterator()) {
+                var call = API.deleteTask(id = i.taskId.toString())
+
+                call.enqueue(object:retrofit2.Callback<Void>{
+                    override fun onFailure(call: Call<Void>, t: Throwable) {
+                        println(t.message)
+                        Toast.makeText(
+                                this@MainActivity,
+                                t.message,
+                                Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                        println(response.body())
+                        if (response.code() == 201) {
+                            Toast.makeText(this@MainActivity, "Task is deleted", Toast.LENGTH_SHORT)
+                                    .show()
+                        }
+                        else{
+                            Toast.makeText(this@MainActivity, "Failed!", Toast.LENGTH_SHORT)
+                                    .show()
+                        }
+                        showTasks(API)
+                    }
+                })
+            }
+        }
+
+        listView.setOnItemClickListener { adapterView, view, i, l ->
+            val position = listView.checkedItemPosition
+            var taskContent = taskList?.get(position)?.content
+            editText.setText(taskContent)
+            checkTaskIsSelected()
         }
 //
-//        clear.setOnClickListener {
-//
-//            itemlist.clear()
-//            adapter.notifyDataSetChanged()
-//        }
-//
-//        listView.setOnItemClickListener { adapterView, view, i, l ->
-//            android.widget.Toast.makeText(this, "You Selected the item --> "+itemlist.get(i), android.widget.Toast.LENGTH_SHORT).show()
-//        }
-//
-//        delete.setOnClickListener {
-//            val position: SparseBooleanArray = listView.checkedItemPositions
-//            val count = listView.count
-//            var item = count - 1
-//            while (item >= 0) {
-//                if (position.get(item))
-//                {
-//                    adapter.remove(itemlist.get(item))
-//                }
-//                item--
-//            }
-//            position.clear()
-//            adapter.notifyDataSetChanged()
-//        }
-//    }
+        delete.setOnClickListener {
+            val position = listView.checkedItemPosition
+            var task = taskList?.get(position)
+            if (task != null) {
+                var call = API.deleteTask(id = task.taskId.toString())
 
+                call.enqueue(object:retrofit2.Callback<Void>{
+                    override fun onFailure(call: Call<Void>, t: Throwable) {
+                        println(t.message)
+                        Toast.makeText(
+                                this@MainActivity,
+                                t.message,
+                                Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                        println(response.body())
+                        if (response.code() == 201) {
+                            Toast.makeText(this@MainActivity, "Task is deleted", Toast.LENGTH_SHORT)
+                                    .show()
+                        }
+                        else{
+                            Toast.makeText(this@MainActivity, "Failed!", Toast.LENGTH_SHORT)
+                                    .show()
+                        }
+                        showTasks(API)
+                        editText.text.clear()
+                        disableButtons()
+                    }
+
+                })
+            }
+        }
     }
+
     fun showTasks(API: RetrofitInterface){
         var call = API.tasks
         call?.enqueue(object:retrofit2.Callback<List<TaskModelItem?>?>{
@@ -113,13 +207,13 @@ class MainActivity : AppCompatActivity() {
                     call: retrofit2.Call<List<TaskModelItem?>?>,
                     response: retrofit2.Response<List<TaskModelItem?>?>
             ) {
-                var taskList : List<TaskModelItem>? = response.body() as List<TaskModelItem>
+                taskList = response.body() as List<TaskModelItem>
                 var task = arrayOfNulls<String>(taskList!!.size)
 
                 for (i in taskList!!.indices)
                     task[i] = taskList!![i]!!.content
 
-                var adapter = ArrayAdapter<String>(applicationContext, android.R.layout.simple_list_item_multiple_choice
+                var adapter = ArrayAdapter<String>(applicationContext, android.R.layout.simple_list_item_single_choice
                         , task)
                 listView.adapter = adapter
 
@@ -134,5 +228,20 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
+    }
+
+    fun checkTaskIsSelected() {
+        for (i in taskList!!.indices) {
+            if (listView.isItemChecked(i)) {
+                edit.isEnabled = true
+                delete.isEnabled = true
+                break
+            }
+        }
+    }
+
+    fun disableButtons() {
+        edit.isEnabled = false
+        delete.isEnabled = false
     }
 }

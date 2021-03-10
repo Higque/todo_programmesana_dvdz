@@ -11,7 +11,12 @@ interface RetrofitInterface {
     @get:GET("tasks")
     val tasks : Call<List<TaskModelItem?>?>?
 
-//    @FormUrlEncoded
+    @PUT("tasks/{id}")
+    fun putTask(@Path("id") id: String, @Body taskModelItem: TaskPostModel): Call<Void>
+
+    @DELETE("tasks/{id}")
+    fun deleteTask(@Path("id") id: String): Call<Void>
+
     @POST("tasks")
     fun createTask(@Body task: TaskPostModel
     ): Call<TaskPostModel>
