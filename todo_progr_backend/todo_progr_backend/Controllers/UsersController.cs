@@ -9,7 +9,7 @@ using todo_progr_backend.UserData;
 
 namespace todo_progr_backend.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     public class UsersController : ControllerBase
     {
