@@ -1,0 +1,62 @@
+package com.example.to_dolistandroidapp
+
+import Models.SignInBody
+import Models.UserBody
+import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.widget.Toast
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+
+class LoginActivity : AppCompatActivity() {
+
+    lateinit var loggedUserId: String
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_login)
+
+        var rf = Retrofit.Builder()
+            .baseUrl(RetrofitInterface.BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create()).build()
+
+        var API = rf.create(RetrofitInterface::class.java)
+
+        signIn("email@test.test", "password", API)
+    }
+
+    private fun signIn(email: String, password: String, API: RetrofitInterface) {
+        val signInInfo = SignInBody(email, password)
+        API.signInUser(signInInfo, email, password).enqueue(object: Callback<UserBody> {
+            override fun onFailure(call: Call<UserBody>, t: Throwable) {
+                Toast.makeText(
+                    this@LoginActivity,
+                    t.message,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+
+            override fun onResponse(call: Call<UserBody>, response: Response<UserBody>) {
+                if (response.code() == 200) {
+                    Toast.makeText(this@LoginActivity, "Login success!", Toast.LENGTH_SHORT).show()
+                    println(response.body())
+                    val user = response.body()
+                    if (user != null) {
+//                        loggedUserId = user.userId
+                        val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                        intent.putExtra("loggedUserId", user.userId)
+                        startActivity(intent)
+                    }
+                } else {
+                    Toast.makeText(this@LoginActivity, "Login failed!", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+        })
+    }
+}

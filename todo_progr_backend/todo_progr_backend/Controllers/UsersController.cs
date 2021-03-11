@@ -70,30 +70,10 @@ namespace todo_progr_backend.Controllers
                 , user);
         }
 
-        //[HttpPost]
-        //[Route("api/[controller]/login")]
-        //public IActionResult Login(string email, string password)
-        //{
-        //    var user = _userData.Login(email, password);
-
-        //    if (user != null)
-        //    {
-        //        return Ok(user);
-        //    }
-
-        //    return BadRequest("Incorrect user data!");
-        //}
-
         [HttpPost]
         [Route("api/[controller]/login")]
-        public IActionResult Login(string loginToken)
+        public IActionResult Login(string email, string password)
         {
-            var bytes = Convert.FromBase64String(loginToken);
-            string[] credentials = Encoding.UTF8.GetString(bytes).Split(":");
-            string email = credentials[0];
-            string password = credentials[1];
-
-
             var user = _userData.Login(email, password);
 
             if (user != null)
@@ -103,6 +83,26 @@ namespace todo_progr_backend.Controllers
 
             return BadRequest("Incorrect user data!");
         }
+
+        //[HttpPost]
+        //[Route("api/[controller]/login")]
+        //public IActionResult Login(string loginToken)
+        //{
+        //    var bytes = Convert.FromBase64String(loginToken);
+        //    string[] credentials = Encoding.UTF8.GetString(bytes).Split(":");
+        //    string email = credentials[0];
+        //    string password = credentials[1];
+
+
+        //    var user = _userData.Login(email, password);
+
+        //    if (user != null)
+        //    {
+        //        return Ok(user);
+        //    }
+
+        //    return BadRequest("Incorrect user data!");
+        //}
 
 
 
