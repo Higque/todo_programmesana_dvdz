@@ -4,12 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using System.Text;
 using todo_progr_backend.Models;
 using todo_progr_backend.UserData;
 
 namespace todo_progr_backend.Controllers
 {
-    //[Authorize]
+   // [Authorize]
     [ApiController]
     public class UsersController : ControllerBase
     {
@@ -69,10 +70,30 @@ namespace todo_progr_backend.Controllers
                 , user);
         }
 
+        //[HttpPost]
+        //[Route("api/[controller]/login")]
+        //public IActionResult Login(string email, string password)
+        //{
+        //    var user = _userData.Login(email, password);
+
+        //    if (user != null)
+        //    {
+        //        return Ok(user);
+        //    }
+
+        //    return BadRequest("Incorrect user data!");
+        //}
+
         [HttpPost]
         [Route("api/[controller]/login")]
-        public IActionResult Login(string email, string password)
+        public IActionResult Login(string loginToken)
         {
+            var bytes = Convert.FromBase64String(loginToken);
+            string[] credentials = Encoding.UTF8.GetString(bytes).Split(":");
+            string email = credentials[0];
+            string password = credentials[1];
+
+
             var user = _userData.Login(email, password);
 
             if (user != null)

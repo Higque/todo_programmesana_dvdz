@@ -9,7 +9,7 @@ using todo_progr_backend.TaskData;
 
 namespace todo_progr_backend.Controllers
 {
-    //[Authorize]
+    [Authorize]
     public class TasksController : ControllerBase
     {
         private ITaskData _taskData;

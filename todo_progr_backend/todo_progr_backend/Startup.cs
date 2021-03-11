@@ -38,8 +38,8 @@ namespace todo_progr_backend
             services.AddScoped<IUserData, SqlUserData>();
             services.AddScoped<ITaskData, SqlTaskData>();
 
-           // services.AddAuthentication("BasicAuthentication")
-               // .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+            services.AddAuthentication("BasicAuthentication")
+                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
 
         }
 
@@ -53,7 +53,7 @@ namespace todo_progr_backend
 
             app.UseRouting();
 
-          //  app.UseAuthentication();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
