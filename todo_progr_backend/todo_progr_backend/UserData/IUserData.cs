@@ -12,6 +12,8 @@ namespace todo_progr_backend.UserData
 
         List<User> GetUsersAndTasks();
 
+        List<Tasks> GetUsersTasks(Guid id);
+
         int GetUserAmount();
 
         User GetUser(Guid id);

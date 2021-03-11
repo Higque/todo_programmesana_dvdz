@@ -66,6 +66,12 @@ namespace todo_progr_backend.UserData
             return _userContext.Users.Include(x => x.Tasks).ToList();
         }
 
+        public List<Tasks> GetUsersTasks(Guid id)
+        {
+            User user = _userContext.Users.Where(user => user.UserId == id).Include(user => user.Tasks).FirstOrDefault();
+            return user.Tasks;
+        }
+
         public User Login(string email, string password)
         {
             User user = _userContext.Users.Where(user => user.Email == email && user.Password == password).FirstOrDefault();
