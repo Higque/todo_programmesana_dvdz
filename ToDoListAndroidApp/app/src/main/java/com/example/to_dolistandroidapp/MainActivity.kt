@@ -26,7 +26,7 @@ import java.time.LocalDateTime
 
 class MainActivity : AppCompatActivity() {
 
-    var taskList : List<TaskModelItem> = listOf()
+    lateinit var taskList : List<TaskModelItem>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +40,8 @@ class MainActivity : AppCompatActivity() {
 
         var API = rf.create(RetrofitInterface::class.java)
         showTasks(API)
+        val loggedUserId = intent.getStringExtra("loggedUserId")
+        println(loggedUserId)
 
         add.setOnClickListener {
             if (editText.text.toString() != "") {
@@ -120,7 +122,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         clear.setOnClickListener {
-            for(i in taskList.iterator()) {
+            for(i in taskList?.iterator()) {
                 var call = API.deleteTask(id = i.taskId.toString())
 
                 call.enqueue(object:retrofit2.Callback<Void>{
@@ -207,24 +209,29 @@ class MainActivity : AppCompatActivity() {
                     call: retrofit2.Call<List<TaskModelItem?>?>,
                     response: retrofit2.Response<List<TaskModelItem?>?>
             ) {
-                taskList = response.body() as List<TaskModelItem>
-                var task = arrayOfNulls<String>(taskList!!.size)
+                val tempList = response.body()
+                if (tempList != null) {
+                    taskList = tempList as List<TaskModelItem>
+                    var task = arrayOfNulls<String>(taskList!!.size)
 
-                for (i in taskList!!.indices)
-                    task[i] = taskList!![i]!!.content
+                    for (i in taskList!!.indices)
+                        task[i] = taskList!![i]!!.content
 
-                var adapter = ArrayAdapter<String>(applicationContext, android.R.layout.simple_list_item_single_choice
+                    var adapter = ArrayAdapter<String>(applicationContext, android.R.layout.simple_list_item_single_choice
                         , task)
-                listView.adapter = adapter
+                    listView.adapter = adapter
 
-                if (response.code() == 200) {
-                    Toast.makeText(this@MainActivity, "Success!", Toast.LENGTH_SHORT)
+                    if (response.code() == 200) {
+                        Toast.makeText(this@MainActivity, "Success!", Toast.LENGTH_SHORT)
                             .show()
-                }
-                else{
-                    Toast.makeText(this@MainActivity, "Failed!", Toast.LENGTH_SHORT)
+                    }
+                    else{
+                        Toast.makeText(this@MainActivity, "Failed!", Toast.LENGTH_SHORT)
                             .show()
+                    }
                 }
+//                taskList = response.body() as List<TaskModelItem>
+
             }
 
         })
