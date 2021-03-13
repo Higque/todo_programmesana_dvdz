@@ -32,6 +32,11 @@ class LoginActivity : AppCompatActivity() {
         btnLogin.setOnClickListener {
             signIn(emailField.text.toString(), passwordField.text.toString(), API)
         }
+
+        btnSignUp.setOnClickListener {
+            val intent = Intent(this@LoginActivity, RegisterActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun signIn(email: String, password: String, API: RetrofitInterface) {
