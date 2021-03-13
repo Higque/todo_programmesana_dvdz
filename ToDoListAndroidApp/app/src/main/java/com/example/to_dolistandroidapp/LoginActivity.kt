@@ -6,6 +6,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import kotlinx.android.synthetic.main.activity_login.*
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -27,7 +28,9 @@ class LoginActivity : AppCompatActivity() {
 
         var API = rf.create(RetrofitInterface::class.java)
 
-        signIn("email@test.test", "password", API)
+        btnLogin.setOnClickListener {
+            signIn(emailField.text.toString(), passwordField.text.toString(), API)
+        }
     }
 
     private fun signIn(email: String, password: String, API: RetrofitInterface) {
@@ -54,6 +57,8 @@ class LoginActivity : AppCompatActivity() {
                     }
                 } else {
                     Toast.makeText(this@LoginActivity, "Login failed!", Toast.LENGTH_SHORT).show()
+                    emailField.text.clear()
+                    passwordField.text.clear()
                 }
             }
 
