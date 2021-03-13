@@ -1,9 +1,6 @@
 package com.example.to_dolistandroidapp
 
-import Models.SignInBody
-import Models.TaskModelItem
-import Models.TaskPostModel
-import Models.UserBody
+import Models.*
 import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -40,4 +37,7 @@ interface RetrofitInterface {
     @POST("users/login")
     fun signInUser(@Body info: SignInBody, @Query("email") email: String,
                    @Query("password") password: String): retrofit2.Call<UserBody>
+
+    @POST("users")
+    fun signUpPost(@Body user: SignUpUser): Call<SignUpUser>
 }

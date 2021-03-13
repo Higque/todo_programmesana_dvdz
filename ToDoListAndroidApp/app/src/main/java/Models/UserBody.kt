@@ -6,3 +6,9 @@ data class UserBody (
     val password: String,
     val email: String
 )
+
+data class SignUpUser(
+    val userName: String,
+    val password: String,
+    val email: String
+)
