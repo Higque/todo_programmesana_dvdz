@@ -15,6 +15,9 @@ interface RetrofitInterface {
     @get:GET("tasks")
     val tasks : Call<List<TaskModelItem?>?>?
 
+    @GET("users/{id}/tasks")
+    fun getUserTasks(@Path("id") id: String): Call<List<TaskModelItem?>?>?
+
     @PUT("tasks/{id}")
     fun putTask(@Path("id") id: String, @Body taskModelItem: TaskPostModel): Call<Void>
 

@@ -16,11 +16,12 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class LoginActivity : AppCompatActivity() {
 
-    lateinit var loggedUserId: String
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        emailField.text.clear()
+        passwordField.text.clear()
 
         var rf = Retrofit.Builder()
             .baseUrl(RetrofitInterface.BASE_URL)
@@ -50,7 +51,8 @@ class LoginActivity : AppCompatActivity() {
                     println(response.body())
                     val user = response.body()
                     if (user != null) {
-//                        loggedUserId = user.userId
+                        emailField.text.clear()
+                        passwordField.text.clear()
                         val intent = Intent(this@LoginActivity, MainActivity::class.java)
                         intent.putExtra("loggedUserId", user.userId)
                         startActivity(intent)

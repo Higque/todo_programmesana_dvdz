@@ -39,16 +39,20 @@ class MainActivity : AppCompatActivity() {
             .addConverterFactory(GsonConverterFactory.create()).build()
 
         var API = rf.create(RetrofitInterface::class.java)
-        showTasks(API)
+//        showTasks(API)
         val loggedUserId = intent.getStringExtra("loggedUserId")
         println(loggedUserId)
+
+        if (loggedUserId != null) {
+            showUserTasks(loggedUserId, API)
+        }
 
         add.setOnClickListener {
             if (editText.text.toString() != "") {
                 API.createTask(TaskPostModel(
-                        editText.text.toString(),
-                        LocalDateTime.now().toString(),
-                        "614c93e3-a880-43cb-a2ac-d89105507922")
+                        content = editText.text.toString(),
+                        createdDate = LocalDateTime.now().toString(),
+                        userId = loggedUserId!!)
                 ).enqueue(object : Callback<TaskPostModel>{
                     override fun onFailure(call: Call<TaskPostModel>, t: Throwable) {
                         Toast.makeText(
@@ -69,7 +73,10 @@ class MainActivity : AppCompatActivity() {
                             Toast.makeText(this@MainActivity, "Failed!", Toast.LENGTH_SHORT)
                                     .show()
                         }
-                        showTasks(API)
+//                        showTasks(API)
+                        if (loggedUserId != null) {
+                            showUserTasks(loggedUserId, API)
+                        }
                         editText.text.clear()
                         disableButtons()
                     }
@@ -112,7 +119,10 @@ class MainActivity : AppCompatActivity() {
                             Toast.makeText(this@MainActivity, "Failed!", Toast.LENGTH_SHORT)
                                     .show()
                         }
-                        showTasks(API)
+//                        showTasks(API)
+                        if (loggedUserId != null) {
+                            showUserTasks(loggedUserId, API)
+                        }
                         editText.text.clear()
                         disableButtons()
                     }
@@ -145,7 +155,12 @@ class MainActivity : AppCompatActivity() {
                             Toast.makeText(this@MainActivity, "Failed!", Toast.LENGTH_SHORT)
                                     .show()
                         }
-                        showTasks(API)
+//                        showTasks(API)
+                        if (loggedUserId != null) {
+                            showUserTasks(loggedUserId, API)
+                            editText.text.clear()
+                            disableButtons()
+                        }
                     }
                 })
             }
@@ -184,7 +199,10 @@ class MainActivity : AppCompatActivity() {
                             Toast.makeText(this@MainActivity, "Failed!", Toast.LENGTH_SHORT)
                                     .show()
                         }
-                        showTasks(API)
+//                        showTasks(API)
+                        if (loggedUserId != null) {
+                            showUserTasks(loggedUserId, API)
+                        }
                         editText.text.clear()
                         disableButtons()
                     }
@@ -228,6 +246,49 @@ class MainActivity : AppCompatActivity() {
                     else{
                         Toast.makeText(this@MainActivity, "Failed!", Toast.LENGTH_SHORT)
                             .show()
+                    }
+                }
+//                taskList = response.body() as List<TaskModelItem>
+
+            }
+
+        })
+    }
+
+    fun showUserTasks(userId: String, API: RetrofitInterface){
+        var call = API.getUserTasks(userId)
+        call?.enqueue(object:retrofit2.Callback<List<TaskModelItem?>?>{
+            override fun onFailure(call: retrofit2.Call<List<TaskModelItem?>?>, t: Throwable) {
+                Toast.makeText(
+                        this@MainActivity,
+                        t.message,
+                        Toast.LENGTH_SHORT
+                ).show()
+            }
+
+            override fun onResponse(
+                    call: retrofit2.Call<List<TaskModelItem?>?>,
+                    response: retrofit2.Response<List<TaskModelItem?>?>
+            ) {
+                val tempList = response.body()
+                if (tempList != null) {
+                    taskList = tempList as List<TaskModelItem>
+                    var task = arrayOfNulls<String>(taskList!!.size)
+
+                    for (i in taskList!!.indices)
+                        task[i] = taskList!![i]!!.content
+
+                    var adapter = ArrayAdapter<String>(applicationContext, android.R.layout.simple_list_item_single_choice
+                            , task)
+                    listView.adapter = adapter
+
+                    if (response.code() == 200) {
+                        Toast.makeText(this@MainActivity, "Success!", Toast.LENGTH_SHORT)
+                                .show()
+                    }
+                    else{
+                        Toast.makeText(this@MainActivity, "Failed!", Toast.LENGTH_SHORT)
+                                .show()
                     }
                 }
 //                taskList = response.body() as List<TaskModelItem>
