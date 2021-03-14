@@ -33,10 +33,14 @@ interface RetrofitInterface {
         }
     }
 
+//    @Headers("Content-Type:application/json")
+//    @POST("users/login")
+//    fun signInUser(@Body info: SignInBody, @Query("email") email: String,
+//                   @Query("password") password: String): retrofit2.Call<UserBody>
+
     @Headers("Content-Type:application/json")
     @POST("users/login")
-    fun signInUser(@Body info: SignInBody, @Query("email") email: String,
-                   @Query("password") password: String): retrofit2.Call<UserBody>
+    fun signInUser(@Body info: SignInBody, @Query("loginToken") loginToken: String): retrofit2.Call<UserBody>
 
     @POST("users")
     fun signUpPost(@Body user: SignUpUser): Call<SignUpUser>
