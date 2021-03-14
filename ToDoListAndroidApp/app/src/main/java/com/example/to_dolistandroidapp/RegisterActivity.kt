@@ -12,6 +12,8 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.Base64
+
 
 class RegisterActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,7 +27,9 @@ class RegisterActivity : AppCompatActivity() {
         var API = rf.create(RetrofitInterface::class.java)
 
         btnSignUp.setOnClickListener {
-            signUp(userNameSignUp.text.toString(), emailSignUp.text.toString(), passwordSignUp.text.toString(), API)
+            var encodedPassword = Base64.getEncoder().encodeToString(passwordSignUp.text.toString().toByteArray())
+            var encodedEmail = Base64.getEncoder().encodeToString(emailSignUp.text.toString().toByteArray())
+            signUp(userNameSignUp.text.toString(), encodedEmail, encodedPassword, API)
         }
 
     }
