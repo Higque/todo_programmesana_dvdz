@@ -7,12 +7,15 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.activity_login.btnSignUp
+import kotlinx.android.synthetic.main.activity_register.*
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.*
 
 class LoginActivity : AppCompatActivity() {
 
@@ -40,8 +43,13 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun signIn(email: String, password: String, API: RetrofitInterface) {
-        val signInInfo = SignInBody(email, password)
-        API.signInUser(signInInfo, email, password).enqueue(object: Callback<UserBody> {
+        var encodedPassword = Base64.getEncoder().encodeToString(password.toByteArray())
+        var encodedEmail = Base64.getEncoder().encodeToString(email.toByteArray())
+
+        val signInInfo = SignInBody(encodedEmail, encodedPassword)
+
+        var loginToken = Base64.getEncoder().encodeToString("$email:$password".toByteArray())
+        API.signInUser(signInInfo, loginToken).enqueue(object: Callback<UserBody> {
             override fun onFailure(call: Call<UserBody>, t: Throwable) {
                 Toast.makeText(
                     this@LoginActivity,
