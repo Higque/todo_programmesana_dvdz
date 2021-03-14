@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using todo_progr_backend.Models;
 
@@ -74,7 +75,10 @@ namespace todo_progr_backend.UserData
 
         public User Login(string email, string password)
         {
-            User user = _userContext.Users.Where(user => user.Email == email && user.Password == password).FirstOrDefault();
+            User user = _userContext.Users
+                .AsEnumerable()
+                .Where(user => Encoding.UTF8.GetString(Convert.FromBase64String(user.Email)) == email && Encoding.UTF8.GetString(Convert.FromBase64String(user.Password)) == password)
+                .FirstOrDefault();
 
             return user;
         }
