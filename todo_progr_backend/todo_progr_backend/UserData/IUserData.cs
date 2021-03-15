@@ -26,5 +26,11 @@ namespace todo_progr_backend.UserData
 
         User Login(string email, string password);
 
+        bool IsValidEmail(string email);
+
+        bool IsValidPassword(string password);
+
+        bool ValidateUserData(User user);
+
     }
 }

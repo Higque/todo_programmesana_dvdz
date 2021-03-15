@@ -77,10 +77,16 @@ namespace todo_progr_backend.Controllers
         [Route("api/[controller]")]
         public IActionResult AddUser(User user)
         {
-            _userData.AddUser(user);
+            if (_userData.ValidateUserData(user))
+            {
+                _userData.AddUser(user);
 
-            return Created(HttpContext.Request.Scheme + "://" + HttpContext.Request.Host + HttpContext.Request.Path + "/" + user.UserId
-                , user);
+                return Created(HttpContext.Request.Scheme + "://" + HttpContext.Request.Host + HttpContext.Request.Path + "/" + user.UserId
+                    , user);
+            }
+
+            return BadRequest("Incorrect user data!");
+
         }
 
         //[HttpPost]
@@ -101,17 +107,23 @@ namespace todo_progr_backend.Controllers
         [Route("api/[controller]/login")]
         public IActionResult Login(string loginToken)
         {
-            var bytes = Convert.FromBase64String(loginToken);
-            string[] credentials = Encoding.UTF8.GetString(bytes).Split(":");
-            string email = credentials[0];
-            string password = credentials[1];
-
-
-            var user = _userData.Login(email, password);
-
-            if (user != null)
+            try
             {
-                return Ok(user);
+                var bytes = Convert.FromBase64String(loginToken);
+                string[] credentials = Encoding.UTF8.GetString(bytes).Split(":");
+                string email = credentials[0];
+                string password = credentials[1];
+
+                var user = _userData.Login(email, password);
+
+                if (user != null)
+                {
+                    return Ok(user);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
             }
 
             return BadRequest("Incorrect user data!");

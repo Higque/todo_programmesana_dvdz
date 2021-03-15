@@ -3,7 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using todo_progr_backend.Models;
 
 namespace todo_progr_backend.UserData
@@ -81,6 +83,53 @@ namespace todo_progr_backend.UserData
                 .FirstOrDefault();
 
             return user;
+        }
+
+        public bool IsValidEmail(string inputEmail)
+        {
+            Regex re = new Regex(@"^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$",
+                          RegexOptions.IgnoreCase);
+            return re.IsMatch(inputEmail);
+        }
+
+        public bool ValidateUserData(User user)
+        {
+            if (_userContext.Users.Any(u => u.UserName == user.UserName && u.Email == user.Email))
+            {
+                return false;
+            }
+
+            if (_userContext.Users.Any(u => u.Email == user.Email))
+            {
+                return false;
+            }
+
+            if (_userContext.Users.Any(u => u.UserName == user.UserName))
+            {
+                return false;
+            }
+
+            bool emailIsValid = IsValidEmail(Encoding.UTF8.GetString(Convert.FromBase64String(user.Email)));
+            bool passIsValid = IsValidPassword(Encoding.UTF8.GetString(Convert.FromBase64String(user.Password)));
+
+            if (!emailIsValid)
+            {
+                return false;
+            }
+
+            if (!passIsValid)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool IsValidPassword(string password)
+        {
+            Regex re = new Regex(@"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$",
+              RegexOptions.IgnoreCase);
+            return re.IsMatch(password);
         }
     }
 }
