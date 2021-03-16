@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Todo } from './../../models/Todo';
+import { TaskService } from './task.service';
 
 @Component({
   selector: 'app-todos',
@@ -10,8 +11,11 @@ export class TodosComponent implements OnInit {
   todos:Todo[];
 
   inputTodo:string = "";
-
-  constructor() { }
+  /*tasks$;
+  constructor(private taskService: TaskService) { }
+  fetchTask() {
+    this.tasks$ = this.taskService.fetchTask();
+  }*/
 
   ngOnInit(): void {
   this.todos = [
@@ -43,5 +47,4 @@ addTodo() {
 
   this.inputTodo = "";
 }
-
 }

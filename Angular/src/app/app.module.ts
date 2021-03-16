@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-//import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { FormsModule } from '@angular/forms';
 import { TodosComponent } from './components/todos/todos.component';
@@ -10,7 +10,7 @@ import { RegisterComponent } from './register/register.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MyMaterialModule } from  './material.module';
 import { RouterModule, Routes } from '@angular/router';
-import { Todo } from './models/Todo';
+
 
 @NgModule({
   declarations: [
@@ -25,7 +25,7 @@ import { Todo } from './models/Todo';
     AppRoutingModule,
     BrowserAnimationsModule,
     MyMaterialModule,
-    //HttpClientModule
+    HttpClientModule,
     RouterModule.forRoot([
       { path: '', redirectTo: '/', pathMatch: 'full' },
       { path: 'register', component: RegisterComponent },
