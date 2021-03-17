@@ -15,6 +15,7 @@ namespace todo_progr_backend.Models
         [Required]
         public DateTime CreatedDate { get; set; }
         [Required]
+        [MinLength(5, ErrorMessage = "Too short content!")]
         [MaxLength(150,ErrorMessage = "Too long content!")]
         public string Content { get; set; }
 

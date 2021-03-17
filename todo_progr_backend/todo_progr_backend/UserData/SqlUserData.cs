@@ -94,35 +94,43 @@ namespace todo_progr_backend.UserData
 
         public bool ValidateUserData(User user)
         {
-            if (_userContext.Users.Any(u => u.UserName == user.UserName && u.Email == user.Email))
+            try
             {
-                return false;
+                if (_userContext.Users.Any(u => u.UserName == user.UserName && u.Email == user.Email))
+                {
+                    return false;
+                }
+
+                if (_userContext.Users.Any(u => u.Email == user.Email))
+                {
+                    return false;
+                }
+
+                if (_userContext.Users.Any(u => u.UserName == user.UserName))
+                {
+                    return false;
+                }
+
+                bool emailIsValid = IsValidEmail(Encoding.UTF8.GetString(Convert.FromBase64String(user.Email)));
+                bool passIsValid = IsValidPassword(Encoding.UTF8.GetString(Convert.FromBase64String(user.Password)));
+
+                if (!emailIsValid)
+                {
+                    return false;
+                }
+
+                if (!passIsValid)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                throw;
             }
 
-            if (_userContext.Users.Any(u => u.Email == user.Email))
-            {
-                return false;
-            }
-
-            if (_userContext.Users.Any(u => u.UserName == user.UserName))
-            {
-                return false;
-            }
-
-            bool emailIsValid = IsValidEmail(Encoding.UTF8.GetString(Convert.FromBase64String(user.Email)));
-            bool passIsValid = IsValidPassword(Encoding.UTF8.GetString(Convert.FromBase64String(user.Password)));
-
-            if (!emailIsValid)
-            {
-                return false;
-            }
-
-            if (!passIsValid)
-            {
-                return false;
-            }
-
-            return true;
         }
 
         public bool IsValidPassword(string password)

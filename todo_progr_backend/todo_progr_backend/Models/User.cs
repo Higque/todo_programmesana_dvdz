@@ -16,9 +16,11 @@ namespace todo_progr_backend.Models
         [Key]
         public Guid UserId { get; set; }
         [Required]
+        [MinLength(5, ErrorMessage = "Too short User Name!")]
         [MaxLength(50, ErrorMessage = "Too long User Name!")]                                                                                                                     
         public string UserName { get; set; }
         [Required]
+        [MinLength(8, ErrorMessage = "Too short Password!")]
         [MaxLength(50, ErrorMessage = "Too long Password!")]
         public string Password { get; set; }
         [Required]
