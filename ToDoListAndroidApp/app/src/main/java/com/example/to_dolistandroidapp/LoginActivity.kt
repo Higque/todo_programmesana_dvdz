@@ -68,6 +68,7 @@ class LoginActivity : AppCompatActivity() {
                         passwordField.text.clear()
                         val intent = Intent(this@LoginActivity, MainActivity::class.java)
                         intent.putExtra("loggedUserId", user.userId)
+                        intent.putExtra("loggedUserName", user.userName)
                         startActivity(intent)
                     }
                 } else {

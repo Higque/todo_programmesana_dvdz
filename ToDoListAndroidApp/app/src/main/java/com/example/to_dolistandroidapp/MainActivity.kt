@@ -41,7 +41,10 @@ class MainActivity : AppCompatActivity() {
         var API = rf.create(RetrofitInterface::class.java)
 //        showTasks(API)
         val loggedUserId = intent.getStringExtra("loggedUserId")
-        println(loggedUserId)
+        val loggedUserName = intent.getStringExtra("loggedUserName")
+        println(loggedUserName)
+
+        userName.text = loggedUserName
 
         if (loggedUserId != null) {
             showUserTasks(loggedUserId, API)
