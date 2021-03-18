@@ -5,11 +5,11 @@ import Models.UserBody
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.TextUtils
+import android.util.Patterns
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_login.btnSignUp
-import kotlinx.android.synthetic.main.activity_register.*
-import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -33,7 +33,17 @@ class LoginActivity : AppCompatActivity() {
         var API = rf.create(RetrofitInterface::class.java)
 
         btnLogin.setOnClickListener {
-            signIn(emailField.text.toString(), passwordField.text.toString(), API)
+            if (emailField.text.isEmpty()){
+                emailField.error = "Fill Email field"
+            } else if (!isValidEmail(emailField.text.toString())) {
+                emailField.error = "Invalid email"
+            }
+            if (passwordField.text.isEmpty()) {
+                passwordField.error = "Fill Password field"
+            }
+            if (emailField.error.isNullOrEmpty() && passwordField.error.isNullOrEmpty()) {
+                signIn(emailField.text.toString(), passwordField.text.toString(), API)
+            }
         }
 
         btnSignUp.setOnClickListener {
@@ -75,9 +85,14 @@ class LoginActivity : AppCompatActivity() {
                     Toast.makeText(this@LoginActivity, "Login failed!", Toast.LENGTH_SHORT).show()
                     emailField.text.clear()
                     passwordField.text.clear()
+                    emailField.error = "Email or password is incorrect"
+                    passwordField.error = "Email or password is incorrect"
                 }
             }
 
         })
+    }
+    fun isValidEmail(email: String): Boolean {
+        return !TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 }
