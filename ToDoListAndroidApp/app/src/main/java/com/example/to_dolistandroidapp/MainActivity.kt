@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.SparseBooleanArray
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.core.view.isEmpty
 import androidx.core.view.iterator
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -45,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         println(loggedUserName)
 
         userName.text = loggedUserName
-
+        listView.emptyView = empty
         if (loggedUserId != null) {
             showUserTasks(loggedUserId, API)
         }
@@ -88,6 +89,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(this@MainActivity, "Text field is empty", Toast.LENGTH_SHORT)
                         .show()
+                editText.error = "Text field cannot be empty"
             }
         }
 
@@ -95,42 +97,48 @@ class MainActivity : AppCompatActivity() {
             val position = listView.checkedItemPosition
             var task = taskList?.get(position)
             if (task != null) {
-                var call = API.putTask(id = task.taskId.toString(),
-                        taskModelItem = TaskPostModel(
-                                content = editText.text.toString(),
-                                createdDate = task.createdDate,
-                                userId = task.userId
-                        ))
+                if (editText.text.toString() != "") {
+                    var call = API.putTask(id = task.taskId.toString(),
+                            taskModelItem = TaskPostModel(
+                                    content = editText.text.toString(),
+                                    createdDate = task.createdDate,
+                                    userId = task.userId
+                            ))
 
-                call.enqueue(object:retrofit2.Callback<Void>{
-                    override fun onFailure(call: Call<Void?>, t: Throwable) {
-                        println(t.message)
-                        Toast.makeText(
-                                this@MainActivity,
-                                t.message,
-                                Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                    call.enqueue(object:retrofit2.Callback<Void>{
+                        override fun onFailure(call: Call<Void?>, t: Throwable) {
+                            println(t.message)
+                            Toast.makeText(
+                                    this@MainActivity,
+                                    t.message,
+                                    Toast.LENGTH_SHORT
+                            ).show()
+                        }
 
-                    override fun onResponse(call: Call<Void?>, response: Response<Void?>) {
-                        println(response.body())
-                        if (response.code() == 201) {
-                            Toast.makeText(this@MainActivity, "Task is updated", Toast.LENGTH_SHORT)
-                                    .show()
-                        }
-                        else{
-                            Toast.makeText(this@MainActivity, "Failed!", Toast.LENGTH_SHORT)
-                                    .show()
-                        }
+                        override fun onResponse(call: Call<Void?>, response: Response<Void?>) {
+                            println(response.body())
+                            if (response.code() == 201) {
+                                Toast.makeText(this@MainActivity, "Task is updated", Toast.LENGTH_SHORT)
+                                        .show()
+                            }
+                            else{
+                                Toast.makeText(this@MainActivity, "Failed!", Toast.LENGTH_SHORT)
+                                        .show()
+                            }
 //                        showTasks(API)
-                        if (loggedUserId != null) {
-                            showUserTasks(loggedUserId, API)
+                            if (loggedUserId != null) {
+                                showUserTasks(loggedUserId, API)
+                            }
+                            editText.text.clear()
+                            disableButtons()
                         }
-                        editText.text.clear()
-                        disableButtons()
-                    }
 
-                })
+                    })
+                } else {
+                    Toast.makeText(this@MainActivity, "Text field is empty", Toast.LENGTH_SHORT)
+                            .show()
+                    editText.error = "Text field cannot be empty"
+                }
             }
         }
 
