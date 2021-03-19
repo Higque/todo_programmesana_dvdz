@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="26dp"
+    tools:context=".EditUserActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Edit User Name"
+        android:textSize="32sp"
+        android:textColorHint="@color/black"
+        android:textColor="@color/black"
+        android:layout_marginBottom="16dp"/>
+
+    <EditText
+        android:id="@+id/editUserName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:hint="User Name"
+        android:textSize="20sp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="28dp"
+        android:textColorHint="@color/black"
+        android:textColor="@color/black"/>
+
+    <Button
+        android:id="@+id/btnEditUserName"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:text="Save"/>
+
+</LinearLayout>
