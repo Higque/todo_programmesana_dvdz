@@ -18,6 +18,9 @@ interface RetrofitInterface {
     @PUT("tasks/{id}")
     fun putTask(@Path("id") id: String, @Body taskModelItem: TaskPostModel): Call<Void>
 
+    @PUT("users/{id}")
+    fun putUser(@Path("id") id: String, @Body userBody: UserBody): Call<Void>
+
     @DELETE("tasks/{id}")
     fun deleteTask(@Path("id") id: String): Call<Void>
 
