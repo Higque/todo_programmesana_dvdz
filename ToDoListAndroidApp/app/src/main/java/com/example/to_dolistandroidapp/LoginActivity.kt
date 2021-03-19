@@ -79,6 +79,8 @@ class LoginActivity : AppCompatActivity() {
                         val intent = Intent(this@LoginActivity, MainActivity::class.java)
                         intent.putExtra("loggedUserId", user.userId)
                         intent.putExtra("loggedUserName", user.userName)
+                        intent.putExtra("loggedPassword", user.password)
+                        intent.putExtra("loggedEmail", user.email)
                         startActivity(intent)
                     }
                 } else {

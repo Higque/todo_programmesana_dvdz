@@ -2,6 +2,7 @@ package com.example.to_dolistandroidapp
 
 import Models.TaskModelItem
 import Models.TaskPostModel
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.SparseBooleanArray
@@ -43,12 +44,24 @@ class MainActivity : AppCompatActivity() {
 //        showTasks(API)
         val loggedUserId = intent.getStringExtra("loggedUserId")
         val loggedUserName = intent.getStringExtra("loggedUserName")
+        val loggedEmail = intent.getStringExtra("loggedEmail")
+        val loggedPassword = intent.getStringExtra("loggedPassword")
+
         println(loggedUserName)
 
         userName.text = loggedUserName
         listView.emptyView = empty
         if (loggedUserId != null) {
             showUserTasks(loggedUserId, API)
+        }
+
+        userName.setOnClickListener{
+            val intent = Intent(this@MainActivity, EditUserActivity::class.java)
+            intent.putExtra("loggedUserId", loggedUserId)
+            intent.putExtra("loggedUserName", loggedUserName)
+            intent.putExtra("loggedEmail", loggedEmail)
+            intent.putExtra("loggedPassword", loggedPassword)
+            startActivity(intent)
         }
 
         add.setOnClickListener {
