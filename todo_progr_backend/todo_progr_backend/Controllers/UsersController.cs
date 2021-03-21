@@ -73,6 +73,21 @@ namespace todo_progr_backend.Controllers
 
         }
 
+
+        [Route("/api/[controller]/{id}/taskAmount")]
+        [HttpGet]
+        public int GetUserTaskAmount(Guid id)
+        {
+            int userTasks = _userData.GetUserTaskAmount(id);
+
+            if (userTasks > 0)
+            {
+                return userTasks;
+            }
+
+            return 0;
+        }
+
         [HttpPost]
         [Route("api/[controller]")]
         public IActionResult AddUser(User user)
@@ -89,28 +104,11 @@ namespace todo_progr_backend.Controllers
 
         }
 
-        //[HttpPost]
-        //[Route("api/[controller]/login")]
-        //public IActionResult Login(string email, string password)
-        //{
-        //    var user = _userData.Login(email, password);
-
-        //    if (user != null)
-        //    {
-        //        return Ok(user);
-        //    }
-
-        //    return BadRequest("Incorrect user data!");
-        //}
-
         [HttpPost]
         [Route("api/[controller]/login")]
         public IActionResult Login(string loginToken)
         {
-            try
-            {
-                var bytes = Convert.FromBase64String(loginToken);
-                string[] credentials = Encoding.UTF8.GetString(bytes).Split(":");
+                string[] credentials = _userData.GetEmailAndPasswordFromToken(loginToken);
                 string email = credentials[0];
                 string password = credentials[1];
 
@@ -120,11 +118,6 @@ namespace todo_progr_backend.Controllers
                 {
                     return Ok(user);
                 }
-            }
-            catch (Exception)
-            {
-                throw;
-            }
 
             return BadRequest("Incorrect user data!");
         }

@@ -10,7 +10,7 @@ using todo_progr_backend.Models;
 
 namespace todo_progr_backend.UserData
 {
-    public class SqlUserData : IUserData
+    public class SqlUserData : ControllerBase, IUserData
     {
         private UserContext _userContext;
 
@@ -85,59 +85,91 @@ namespace todo_progr_backend.UserData
             return user;
         }
 
-        public bool IsValidEmail(string inputEmail)
+
+
+        public bool ValidateUserData(User user)
+        {
+            if (_userContext.Users.Any(u => u.UserName == user.UserName && u.Email == user.Email))
+            {
+                
+                return false;
+            }
+
+            if (_userContext.Users.Any(u => u.Email == user.Email))
+            {
+                return false;
+            }
+
+            if (_userContext.Users.Any(u => u.UserName == user.UserName))
+            {
+                return false;
+            }
+
+            bool emailIsValid;
+            bool passIsValid;
+            try
+            {
+                emailIsValid = IsValidEmail(Encoding.UTF8.GetString(Convert.FromBase64String(user.Email)));
+                passIsValid = IsValidPassword(Encoding.UTF8.GetString(Convert.FromBase64String(user.Password)));
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+         
+
+            if (!emailIsValid)
+            {
+                return false;
+            }
+
+            if (!passIsValid)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool IsValidPassword(string password)
+        {
+            Regex re = new Regex(@"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$",
+              RegexOptions.IgnoreCase);
+            return re.IsMatch(password);
+        }
+
+        private bool IsValidEmail(string inputEmail)
         {
             Regex re = new Regex(@"^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$",
                           RegexOptions.IgnoreCase);
             return re.IsMatch(inputEmail);
         }
 
-        public bool ValidateUserData(User user)
-        {
+        public string[] GetEmailAndPasswordFromToken(string loginToken) {
+            string[] credentials;
             try
             {
-                if (_userContext.Users.Any(u => u.UserName == user.UserName && u.Email == user.Email))
-                {
-                    return false;
-                }
-
-                if (_userContext.Users.Any(u => u.Email == user.Email))
-                {
-                    return false;
-                }
-
-                if (_userContext.Users.Any(u => u.UserName == user.UserName))
-                {
-                    return false;
-                }
-
-                bool emailIsValid = IsValidEmail(Encoding.UTF8.GetString(Convert.FromBase64String(user.Email)));
-                bool passIsValid = IsValidPassword(Encoding.UTF8.GetString(Convert.FromBase64String(user.Password)));
-
-                if (!emailIsValid)
-                {
-                    return false;
-                }
-
-                if (!passIsValid)
-                {
-                    return false;
-                }
-
-                return true;
+                var bytes = Convert.FromBase64String(loginToken);
+                credentials = Encoding.UTF8.GetString(bytes).Split(":");
             }
             catch (Exception)
             {
+
                 throw;
             }
-
+            return credentials;
         }
 
-        public bool IsValidPassword(string password)
+        public int GetUserTaskAmount(Guid id)
         {
-            Regex re = new Regex(@"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$",
-              RegexOptions.IgnoreCase);
-            return re.IsMatch(password);
+            User user = _userContext.Users.Where(user => user.UserId == id).Include(user => user.Tasks).FirstOrDefault();
+
+            if (user != null)
+            {
+                return user.Tasks.Count();
+            }
+
+            return 0;
         }
     }
 }

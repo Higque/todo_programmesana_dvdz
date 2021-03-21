@@ -83,25 +83,5 @@ namespace todo_progr_backend.Controllers
             return NotFound("Task with ID: " + id + " not found!");
         }
 
-
-        //[HttpPut]
-        //[Route("api/[controller]/{id}")]
-        //public IActionResult EditTask(Guid id,[FromBody] Tasks task)
-        //{
-        //    var existingTask = _context.Tasks.Find(id);
-        //    if (existingTask != null)
-        //    {
-        //        existingTask.Content = task.Content;
-        //        existingTask.CreatedDate = task.CreatedDate;
-        //        existingTask.UserId = task.UserId;
-
-        //        _context.Tasks.Update(existingTask);
-        //        _context.SaveChanges();
-
-        //        return Ok();
-        //    }
-
-        //    return NotFound("Task with ID: " + id + " not found!");
-        //}
     }
 }
