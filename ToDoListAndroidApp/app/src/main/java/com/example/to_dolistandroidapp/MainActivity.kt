@@ -5,23 +5,12 @@ import Models.TaskPostModel
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.SparseBooleanArray
 import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.core.view.isEmpty
-import androidx.core.view.iterator
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.activity_main.*
-import okhttp3.MediaType
-import okhttp3.MediaType.Companion.parse
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-//import okhttp3.*
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.time.LocalDateTime
@@ -36,11 +25,11 @@ class MainActivity : AppCompatActivity() {
 
         disableButtons()
 
-        var rf = Retrofit.Builder()
+        val rf = Retrofit.Builder()
             .baseUrl(RetrofitInterface.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create()).build()
 
-        var API = rf.create(RetrofitInterface::class.java)
+        val API = rf.create(RetrofitInterface::class.java)
 //        showTasks(API)
         val loggedUserId = intent.getStringExtra("loggedUserId")
         val loggedUserName = intent.getStringExtra("loggedUserName")
@@ -91,9 +80,7 @@ class MainActivity : AppCompatActivity() {
                                     .show()
                         }
 //                        showTasks(API)
-                        if (loggedUserId != null) {
-                            showUserTasks(loggedUserId, API)
-                        }
+                        showUserTasks(loggedUserId, API)
                         editText.text.clear()
                         disableButtons()
                     }
@@ -108,17 +95,17 @@ class MainActivity : AppCompatActivity() {
 
         edit.setOnClickListener {
             val position = listView.checkedItemPosition
-            var task = taskList?.get(position)
+            val task = taskList.get(position)
             if (task != null) {
                 if (editText.text.toString() != "") {
-                    var call = API.putTask(id = task.taskId.toString(),
+                    val call = API.putTask(id = task.taskId.toString(),
                             taskModelItem = TaskPostModel(
                                     content = editText.text.toString(),
                                     createdDate = task.createdDate,
                                     userId = task.userId
                             ))
 
-                    call.enqueue(object:retrofit2.Callback<Void>{
+                    call.enqueue(object:Callback<Void>{
                         override fun onFailure(call: Call<Void?>, t: Throwable) {
                             println(t.message)
                             Toast.makeText(
@@ -156,10 +143,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         clear.setOnClickListener {
-            for(i in taskList?.iterator()) {
-                var call = API.deleteTask(id = i.taskId.toString())
+            for(i in taskList.iterator()) {
+                val call = API.deleteTask(id = i.taskId.toString())
 
-                call.enqueue(object:retrofit2.Callback<Void>{
+                call.enqueue(object:Callback<Void>{
                     override fun onFailure(call: Call<Void>, t: Throwable) {
                         println(t.message)
                         Toast.makeText(
@@ -192,18 +179,18 @@ class MainActivity : AppCompatActivity() {
 
         listView.setOnItemClickListener { adapterView, view, i, l ->
             val position = listView.checkedItemPosition
-            var taskContent = taskList?.get(position)?.content
+            val taskContent = taskList.get(position).content
             editText.setText(taskContent)
             checkTaskIsSelected()
         }
 //
         delete.setOnClickListener {
             val position = listView.checkedItemPosition
-            var task = taskList?.get(position)
+            val task = taskList.get(position)
             if (task != null) {
-                var call = API.deleteTask(id = task.taskId.toString())
+                val call = API.deleteTask(id = task.taskId.toString())
 
-                call.enqueue(object:retrofit2.Callback<Void>{
+                call.enqueue(object:Callback<Void>{
                     override fun onFailure(call: Call<Void>, t: Throwable) {
                         println(t.message)
                         Toast.makeText(
@@ -237,9 +224,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun showTasks(API: RetrofitInterface){
-        var call = API.tasks
-        call?.enqueue(object:retrofit2.Callback<List<TaskModelItem?>?>{
-            override fun onFailure(call: retrofit2.Call<List<TaskModelItem?>?>, t: Throwable) {
+        val call = API.tasks
+        call?.enqueue(object:Callback<List<TaskModelItem?>?>{
+            override fun onFailure(call:Call<List<TaskModelItem?>?>, t: Throwable) {
                 Toast.makeText(
                         this@MainActivity,
                         t.message,
@@ -248,18 +235,18 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onResponse(
-                    call: retrofit2.Call<List<TaskModelItem?>?>,
-                    response: retrofit2.Response<List<TaskModelItem?>?>
+                    call: Call<List<TaskModelItem?>?>,
+                    response: Response<List<TaskModelItem?>?>
             ) {
                 val tempList = response.body()
                 if (tempList != null) {
                     taskList = tempList as List<TaskModelItem>
-                    var task = arrayOfNulls<String>(taskList!!.size)
+                    val task = arrayOfNulls<String>(taskList.size)
 
-                    for (i in taskList!!.indices)
-                        task[i] = taskList!![i]!!.content
+                    for (i in taskList.indices)
+                        task[i] = taskList[i].content
 
-                    var adapter = ArrayAdapter<String>(applicationContext, android.R.layout.simple_list_item_single_choice
+                    val adapter = ArrayAdapter<String>(applicationContext, android.R.layout.simple_list_item_single_choice
                         , task)
                     listView.adapter = adapter
 
@@ -280,9 +267,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun showUserTasks(userId: String, API: RetrofitInterface){
-        var call = API.getUserTasks(userId)
-        call?.enqueue(object:retrofit2.Callback<List<TaskModelItem?>?>{
-            override fun onFailure(call: retrofit2.Call<List<TaskModelItem?>?>, t: Throwable) {
+        val call = API.getUserTasks(userId)
+        call?.enqueue(object:Callback<List<TaskModelItem?>?>{
+            override fun onFailure(call:Call<List<TaskModelItem?>?>, t: Throwable) {
                 Toast.makeText(
                         this@MainActivity,
                         t.message,
@@ -291,18 +278,18 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onResponse(
-                    call: retrofit2.Call<List<TaskModelItem?>?>,
-                    response: retrofit2.Response<List<TaskModelItem?>?>
+                    call: Call<List<TaskModelItem?>?>,
+                    response: Response<List<TaskModelItem?>?>
             ) {
                 val tempList = response.body()
                 if (tempList != null) {
                     taskList = tempList as List<TaskModelItem>
-                    var task = arrayOfNulls<String>(taskList!!.size)
+                    val task = arrayOfNulls<String>(taskList.size)
 
-                    for (i in taskList!!.indices)
-                        task[i] = taskList!![i]!!.content
+                    for (i in taskList.indices)
+                        task[i] = taskList[i].content
 
-                    var adapter = ArrayAdapter<String>(applicationContext, android.R.layout.simple_list_item_single_choice
+                    val adapter = ArrayAdapter<String>(applicationContext, android.R.layout.simple_list_item_single_choice
                             , task)
                     listView.adapter = adapter
 
@@ -322,8 +309,8 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    fun checkTaskIsSelected() {
-        for (i in taskList!!.indices) {
+    private fun checkTaskIsSelected() {
+        for (i in taskList.indices) {
             if (listView.isItemChecked(i)) {
                 edit.isEnabled = true
                 delete.isEnabled = true

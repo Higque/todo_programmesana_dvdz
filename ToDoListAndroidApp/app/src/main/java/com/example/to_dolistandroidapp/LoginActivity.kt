@@ -26,11 +26,11 @@ class LoginActivity : AppCompatActivity() {
         emailField.text.clear()
         passwordField.text.clear()
 
-        var rf = Retrofit.Builder()
+        val rf = Retrofit.Builder()
             .baseUrl(RetrofitInterface.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create()).build()
 
-        var API = rf.create(RetrofitInterface::class.java)
+        val API = rf.create(RetrofitInterface::class.java)
 
         btnLogin.setOnClickListener {
             if (emailField.text.isEmpty()){
@@ -53,12 +53,12 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun signIn(email: String, password: String, API: RetrofitInterface) {
-        var encodedPassword = Base64.getEncoder().encodeToString(password.toByteArray())
-        var encodedEmail = Base64.getEncoder().encodeToString(email.toByteArray())
+        val encodedPassword = Base64.getEncoder().encodeToString(password.toByteArray())
+        val encodedEmail = Base64.getEncoder().encodeToString(email.toByteArray())
 
         val signInInfo = SignInBody(encodedEmail, encodedPassword)
 
-        var loginToken = Base64.getEncoder().encodeToString("$email:$password".toByteArray())
+        val loginToken = Base64.getEncoder().encodeToString("$email:$password".toByteArray())
         API.signInUser(signInInfo, loginToken).enqueue(object: Callback<UserBody> {
             override fun onFailure(call: Call<UserBody>, t: Throwable) {
                 Toast.makeText(
@@ -94,7 +94,7 @@ class LoginActivity : AppCompatActivity() {
 
         })
     }
-    fun isValidEmail(email: String): Boolean {
+    private fun isValidEmail(email: String): Boolean {
         return !TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 }
