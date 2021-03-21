@@ -1,4 +1,6 @@
 export class Todo {
+    taskId:string;
+    createdDate: string;
     content:string;
-    completed:boolean;
+    userId: string;
 }

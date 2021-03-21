@@ -1,17 +1,30 @@
 <div class="todos">
-    <form (submit)= "addTodo()">
-        <input
-            type="text"
-            name="inputTodo"
-            placeholder="Enter todo..."
-            class="todo-input"
-            [(ngModel)]="inputTodo"
-        />
-        <input type="submit" value = "Add Todo" class="todo-submit">
-    </form>
-    <div *ngFor="let todo of todos; let i = index;" class="todo {{(todo.completed ? 'done' : '')}}">
-        <div class="id">{{i+1}}</div>
-        <div class="content" (click)="toggleDone(i)">{{todo.content}}</div>
-        <button class="deleteButton" (click)="deleteTodo(i)">Remove</button>
-    </div>
+  <form>
+      <input
+          type="text"
+          name="inputTodo"
+          placeholder="Enter todo..."
+          class="todo-input"
+          [(ngModel)]="content"
+      />
+      <input (click) = "PostTodo()" type="reset"  value = "Add Todo" class="todo-submit">
+      <input (click) = "GetTodos()" type="reset" value = "Get Todos" class="todo-submit">
+  </form>
+  <div *ngFor="let todo of todos; let i = index;" class="todo {{(todo.completed ? 'done' : '')}}">
+      <div class="id">{{i+1}}</div>
+      <div class="content" (click)="toggleDone(i)">{{todo.content}}</div>
+      <button class="deleteButton" (click)="DeleteTodo(todo.taskId)">Remove</button>
+  </div>
 </div>
+<!--<button (click)="GetTodos()">Get Todos</button>
+<ul>
+  <li *ngFor="let todo of todos">
+    <input type="text" #todoInput value="{{todo.content}}">
+    <button (click)="DeleteTodo(todo.taskId)">Delete</button>
+    <button (click)="UpdateTodo(todo.taskId,todoInput.value,todo.userId)">Update</button>
+  </li>
+</ul>
+<input type="text"
+[(ngModel)]="content"
+[ngModelOptions]="{standalone: true}"> 
+<button (click)="PostTodo()">Add Task</button>-->

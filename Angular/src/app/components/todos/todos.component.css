@@ -58,6 +58,23 @@
 	font-size: 18px;
 	font-weight: 700;
 }
+.todo-get {
+	display: block;
+	width: 100%;
+	max-width: 200px;
+	appearance: none;
+	border: none;
+	outline: none;
+	background: none;
+
+	background-color:#3101a0;
+	color: #FFF;
+	margin: 15px;
+
+	padding: 10px 15px;
+	font-size: 18px;
+	font-weight: 700;
+}
 
 .deleteButton{
 	display: inline-block;
